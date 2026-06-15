@@ -18,8 +18,11 @@ export function validateAmount(amount: string): ValidationResult {
   if (!amount.trim()) {
     return { isValid: true };
   }
+  if (!/^\d+(\.\d{1,2})?$/.test(amount.trim())) {
+    return { isValid: false, error: 'Amount must be a valid number (up to 2 decimal places)' };
+  }
   const num = Number(amount);
-  if (isNaN(num) || num < 1) {
+  if (num < 1) {
     return { isValid: false, error: 'Amount must be at least ₹1' };
   }
   if (num > MAX_AMOUNT) {
@@ -36,16 +39,18 @@ export function validateNote(note: string): ValidationResult {
 }
 
 export function buildUPILink(params: UPIParams): string {
-  const searchParams = new URLSearchParams();
-  searchParams.set('pa', params.upiId.trim());
+  const parts: string[] = [];
+  parts.push(`pa=${encodeURIComponent(params.upiId.trim())}`);
+  // NPCI UPI spec recommends pn as mandatory; fallback to UPI ID if not provided
+  parts.push(`pn=${encodeURIComponent(params.upiId.trim())}`);
+  parts.push(`cu=INR`);
   if (params.amount && params.amount > 0) {
-    searchParams.set('am', params.amount.toString());
+    parts.push(`am=${encodeURIComponent(params.amount.toString())}`);
   }
   if (params.note && params.note.trim()) {
-    searchParams.set('tn', params.note.trim());
+    parts.push(`tn=${encodeURIComponent(params.note.trim())}`);
   }
-  searchParams.set('cu', 'INR');
-  return `upi://pay?${searchParams.toString()}`;
+  return `upi://pay?${parts.join('&')}`;
 }
 
 export function parseUPIId(upiId: string): { username: string; provider: string } | null {
