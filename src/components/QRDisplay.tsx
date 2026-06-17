@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import { Download, Copy, Share2, Check, ArrowLeft, Smartphone, Link2, ExternalLink } from 'lucide-react';
+import { Download, Copy, Share2, Check, ArrowLeft, Smartphone, Link2, ChevronDown, Image } from 'lucide-react';
 import { downloadQRCode, downloadSVG, copyToClipboard, shareUPILink } from '@/lib/utils';
 
 interface QRDisplayProps {
@@ -12,9 +12,9 @@ interface QRDisplayProps {
 }
 
 const DOWNLOAD_OPTIONS = [
-  { id: 'png', label: 'PNG', icon: Download, action: (ref: SVGSVGElement | null, id: string) => downloadQRCode(ref, `upi-${id}`) },
-  { id: 'svg', label: 'SVG', icon: Download, action: (ref: SVGSVGElement | null, id: string) => downloadSVG(ref, `upi-${id}`) },
-] as const;
+  { id: 'png' as const, label: 'PNG', icon: Image, action: (ref: SVGSVGElement | null, id: string) => downloadQRCode(ref, `upi-${id}`) },
+  { id: 'svg' as const, label: 'SVG', icon: Download, action: (ref: SVGSVGElement | null, id: string) => downloadSVG(ref, `upi-${id}`) },
+];
 
 export default function QRDisplay({ upiLink, upiId, onBack }: QRDisplayProps) {
   const qrRef = useRef<SVGSVGElement>(null);
@@ -36,50 +36,50 @@ export default function QRDisplay({ upiLink, upiId, onBack }: QRDisplayProps) {
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
-      <div className="flex items-center gap-3 pb-2 border-b border-gray-100">
+    <div className="flex flex-col gap-5 animate-fade-in">
+      <div className="flex items-center gap-3 pb-3 border-b border-white/[0.08]">
         <button
           onClick={onBack}
-          className="p-2 -ml-2 rounded-xl hover:bg-gray-100 transition-colors"
+          className="p-2.5 -ml-2 rounded-xl hover:bg-white/[0.08] border border-transparent hover:border-white/[0.1] transition-all duration-300 group"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-600" />
+          <ArrowLeft className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
         </button>
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">Your QR Code</h2>
-          <p className="text-sm text-gray-500">Works on all UPI apps — scan & pay</p>
+          <h2 className="text-lg font-semibold text-white">Your QR Code</h2>
+          <p className="text-sm text-white/40">Scan with any UPI app to pay</p>
         </div>
       </div>
 
       <div className="flex flex-col items-center">
         <div className="relative group">
-          <div className="absolute -inset-1 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-600 rounded-2xl opacity-30 blur-xl transition-opacity duration-300 group-hover:opacity-50" />
-          <div className="relative bg-white p-5 rounded-2xl border border-gray-200 shadow-lg">
+          <div className="absolute -inset-3 bg-gradient-to-br from-violet-500/30 via-blue-500/20 to-cyan-400/30 rounded-3xl opacity-40 group-hover:opacity-60 blur-xl transition-all duration-700 animate-glow-pulse" />
+          <div className="relative bg-white/[0.03] backdrop-blur-xl p-5 rounded-2xl border border-white/[0.1] shadow-2xl">
             <QRCodeSVG
               ref={qrRef}
               value={upiLink}
               size={220}
               level="M"
               includeMargin={true}
-              bgColor="#ffffff"
-              fgColor="#1e293b"
+              bgColor="transparent"
+              fgColor="#ffffff"
             />
           </div>
         </div>
-
-        <div className="flex items-center gap-2 mt-3 px-3 py-1.5 bg-gray-100 rounded-full text-xs">
-          <Smartphone className="w-3.5 h-3.5 text-gray-500" />
-          <span className="text-gray-600">Scan with any UPI app</span>
-        </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Download</p>
-        <div className="grid grid-cols-2 gap-2">
+      <div className="flex items-center justify-center gap-2 px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-full text-xs w-fit mx-auto">
+        <Smartphone className="w-3.5 h-3.5 text-white/50" />
+        <span className="text-white/50">Works on GPay, PhonePe, Paytm & more</span>
+      </div>
+
+      <div className="space-y-3">
+        <p className="text-[10px] font-semibold text-white/30 uppercase tracking-[0.15em] pl-1">Download</p>
+        <div className="grid grid-cols-2 gap-2.5">
           {DOWNLOAD_OPTIONS.map(({ id, label, icon: Icon, action }) => (
             <button
               key={id}
               onClick={() => action(qrRef.current, upiId)}
-              className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-all duration-200 text-sm font-medium text-gray-700 hover:text-blue-700"
+              className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-violet-400/40 hover:bg-violet-400/10 transition-all duration-300 text-sm font-medium text-white/70 hover:text-white"
             >
               <Icon className="w-4 h-4" />
               {label}
@@ -88,34 +88,34 @@ export default function QRDisplay({ upiLink, upiId, onBack }: QRDisplayProps) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Share</p>
-        <div className="grid grid-cols-2 gap-2">
+      <div className="space-y-3">
+        <p className="text-[10px] font-semibold text-white/30 uppercase tracking-[0.15em] pl-1">Share</p>
+        <div className="grid grid-cols-2 gap-2.5">
           <button
             onClick={handleCopy}
-            className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-gray-200 hover:border-green-500 hover:bg-green-50 transition-all duration-200 text-sm font-medium text-gray-700 hover:text-green-700"
+            className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-emerald-400/40 hover:bg-emerald-400/10 transition-all duration-300 text-sm font-medium text-white/70 hover:text-emerald-300"
           >
-            {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
             {copied ? 'Copied!' : 'Copy Link'}
           </button>
           <button
             onClick={handleShare}
-            className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-gray-200 hover:border-purple-500 hover:bg-purple-50 transition-all duration-200 text-sm font-medium text-gray-700 hover:text-purple-700"
+            className="flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-white/[0.03] border border-white/[0.08] hover:border-violet-400/40 hover:bg-violet-400/10 transition-all duration-300 text-sm font-medium text-white/70 hover:text-violet-300"
           >
-            {shared ? <Check className="w-4 h-4 text-purple-500" /> : <Share2 className="w-4 h-4" />}
+            {shared ? <Check className="w-4 h-4 text-violet-400" /> : <Share2 className="w-4 h-4" />}
             {shared ? 'Shared!' : 'Share'}
           </button>
         </div>
       </div>
 
       <details className="group">
-        <summary className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer hover:text-gray-700 transition-colors">
+        <summary className="flex items-center gap-2 text-sm text-white/30 cursor-pointer hover:text-white/60 transition-colors duration-200 select-none py-1">
           <Link2 className="w-3.5 h-3.5" />
           <span>Show deep link</span>
-          <ExternalLink className="w-3 h-3 ml-auto transition-transform group-open:rotate-180" />
+          <ChevronDown className="w-3.5 h-3.5 ml-auto transition-transform duration-300 group-open:rotate-180" />
         </summary>
-        <div className="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-xl">
-          <code className="text-xs text-gray-600 break-all select-all">{upiLink}</code>
+        <div className="mt-2 p-3 bg-white/[0.03] border border-white/[0.08] rounded-xl backdrop-blur-sm">
+          <code className="text-[11px] text-white/50 break-all select-all font-mono leading-relaxed block">{upiLink}</code>
         </div>
       </details>
     </div>
